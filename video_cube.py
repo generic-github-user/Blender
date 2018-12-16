@@ -1,6 +1,8 @@
 import bpy
 
-for i in range(1, 1):
+bpy.context.scene.render.engine = "CYCLES"
+
+for i in range(1, 420):
     name = str(i).zfill(4) + ".jpg"
     filepath = "C:/Users/diamo/Downloads/Frames/" + name
     bpy.data.images.load(filepath, check_existing=True)
