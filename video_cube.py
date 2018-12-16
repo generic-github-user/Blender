@@ -4,13 +4,13 @@ bpy.context.scene.render.engine = "CYCLES"
 
 for i in range(1, 420):
     name = str(i).zfill(4) + ".jpg"
-    filepath = "C:/Users/diamo/Downloads/Frames/" + name
+    filepath = bpy.path.abspath("//Frames\\") + name
     bpy.data.images.load(filepath, check_existing=True)
-    #bpy.data.images[name].name = 0
+    #bpy.data.images[name].name = str(i)
 
 for i in range(1, 420):
     bpy.ops.mesh.primitive_cube_add(location=(0, 0, i * 0.02))
-    bpy.ops.transform.resize(value=(1,1,0.01))
+    bpy.ops.transform.resize(value=(1, 1, 0.01))
     ob = bpy.context.active_object
 
     # Get material
