@@ -23,6 +23,8 @@ for i in range(1, 421):
 	bpy.ops.transform.resize(value=(size[0] / 1e3, size[1] / 1e3, 0.01))
 	# Selected object
 	ob = bpy.context.active_object
+	# Rename slice
+	ob.name = "Video Slice " + str(i)
 	# Add slice to list of layers
 	layers.append(ob)
 
@@ -72,5 +74,7 @@ for layer in layers:
 bpy.ops.object.join()
 # Set origin to center of geometry
 bpy.ops.object.origin_set(type="ORIGIN_GEOMETRY")
+# Set name of object
+bpy.context.object.name = "Video Cube"
 # Deselect
 bpy.ops.object.select_all(action="TOGGLE")
