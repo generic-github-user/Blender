@@ -33,7 +33,7 @@ class VideoCubeSettings(PropertyGroup):
 		default = 400,
 		min = 1,
 		max = 100000
-		)
+	)
 
 	slice_thickness = FloatProperty(
 		name = "Slice Thickness",
@@ -41,7 +41,7 @@ class VideoCubeSettings(PropertyGroup):
 		default = 1,
 		min = 0.1,
 		max = 10
-		)
+	)
 		
 	slice_size = FloatProperty(
 		name = "Slice Size",
@@ -49,16 +49,16 @@ class VideoCubeSettings(PropertyGroup):
 		default = 1,
 		min = 0.1,
 		max = 10
-		)
+	)
 
 	default_path = bpy.path.abspath("//Frames\\")
 	file_path = bpy.props.StringProperty \
-	  (
-	  name = "File Path",
-	  default = default_path,
-	  description = "Define a directory to pull video frames from",
-	  subtype = 'DIR_PATH'
-	  )
+    (
+    	name = "File Path",
+    	default = default_path,
+    	description = "Define a directory to pull video frames from",
+    	subtype = 'DIR_PATH'
+    )
 
 # ------------------------------------------------------------------------
 #	operators
@@ -84,15 +84,26 @@ class HelloWorldOperator(bpy.types.Operator):
 			# File path (relative to .blend file)
 			filepath = mytool.file_path + name
 			# Load image into scene
-			image = bpy.data.images.load(filepath, check_existing=True)
+			image = bpy.data.images.load(
+                filepath,
+                check_existing=True
+            )
 			#bpy.data.images[name].name = str(i)
 
 			# Add objects and materials
 			size = image.size
 			# Add new cube to scene (one video frame)
-			bpy.ops.mesh.primitive_cube_add(location=(0, 0, i * (mytool.slice_thickness / 100 * 2)))
+			bpy.ops.mesh.primitive_cube_add(location=(
+                0,
+                0,
+                i * (mytool.slice_thickness / 100 * 2)
+            ))
 			# Resize cube to be thinner
-			bpy.ops.transform.resize(value=(size[0] / 1e3 * mytool.slice_size, size[1] / 1e3 * mytool.slice_size, mytool.slice_thickness / 100))
+			bpy.ops.transform.resize(value=(
+                size[0] / 1e3 * mytool.slice_size,
+                size[1] / 1e3 * mytool.slice_size,
+                mytool.slice_thickness / 100
+            ))
 			# Selected object
 			ob = bpy.context.active_object
 			# Rename slice
@@ -127,11 +138,26 @@ class HelloWorldOperator(bpy.types.Operator):
 			mix.inputs[0].default_value = 0
 			
 			# Create links between material nodes
-			mat.node_tree.links.new(texture.inputs["Vector"], coord.outputs["Generated"])
-			mat.node_tree.links.new(diff.inputs["Color"], texture.outputs["Color"])
-			mat.node_tree.links.new(mix.inputs[1], diff.outputs["BSDF"])
-			mat.node_tree.links.new(mix.inputs[2], trans.outputs["BSDF"])
-			mat.node_tree.links.new(output.inputs["Surface"], mix.outputs["Shader"])
+			mat.node_tree.links.new(
+                texture.inputs["Vector"],
+                coord.outputs["Generated"]
+            )
+			mat.node_tree.links.new(
+                diff.inputs["Color"],
+                texture.outputs["Color"]
+            )
+			mat.node_tree.links.new(
+                mix.inputs[1],
+                diff.outputs["BSDF"]
+            )
+			mat.node_tree.links.new(
+                mix.inputs[2],
+                trans.outputs["BSDF"]
+            )
+			mat.node_tree.links.new(
+                output.inputs["Surface"],
+                mix.outputs["Shader"]
+            )
 
 			# Assign material to object
 			if ob.data.materials:
