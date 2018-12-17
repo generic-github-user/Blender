@@ -70,7 +70,7 @@ class HelloWorldOperator(bpy.types.Operator):
 
 	def execute(self, context):
 		scene = context.scene
-		mytool = scene.my_tool
+		settings = scene.video_cube
 
 		# Set rendering engine to Cycles
 		bpy.context.scene.render.engine = "CYCLES"
@@ -82,7 +82,7 @@ class HelloWorldOperator(bpy.types.Operator):
 			# Name of image file
 			name = str(i).zfill(4) + ".jpg"
 			# File path (relative to .blend file)
-			filepath = mytool.file_path + name
+			filepath = settings.file_path + name
 			# Load image into scene
 			image = bpy.data.images.load(
                 filepath,
@@ -96,13 +96,13 @@ class HelloWorldOperator(bpy.types.Operator):
 			bpy.ops.mesh.primitive_cube_add(location=(
                 0,
                 0,
-                i * (mytool.slice_thickness / 100 * 2)
+                i * (settings.slice_thickness / 100 * 2)
             ))
 			# Resize cube to be thinner
 			bpy.ops.transform.resize(value=(
-                size[0] / 1e3 * mytool.slice_size,
-                size[1] / 1e3 * mytool.slice_size,
-                mytool.slice_thickness / 100
+                size[0] / 1e3 * settings.slice_size,
+                size[1] / 1e3 * settings.slice_size,
+                settings.slice_thickness / 100
             ))
 			# Selected object
 			ob = bpy.context.active_object
@@ -197,21 +197,21 @@ class OBJECT_PT_my_panel(Panel):
 	def draw(self, context):
 		layout = self.layout
 		scene = context.scene
-		mytool = scene.my_tool
+		settings = scene.video_cube
 
-		layout.prop(mytool, "max_slices")
-		layout.prop(mytool, "slice_thickness")
-		layout.prop(mytool, "slice_size")
-		layout.prop(mytool, "file_path")
+		layout.prop(settings, "max_slices")
+		layout.prop(settings, "slice_thickness")
+		layout.prop(settings, "slice_size")
+		layout.prop(settings, "file_path")
 		layout.operator("wm.hello_world")
 
 def register():
 	bpy.utils.register_module(__name__)
-	bpy.types.Scene.my_tool = PointerProperty(type=VideoCubeSettings)
+	bpy.types.Scene.video_cube = PointerProperty(type=VideoCubeSettings)
 
 def unregister():
 	bpy.utils.unregister_module(__name__)
-	del bpy.types.Scene.my_tool
+	del bpy.types.Scene.video_cube
 
 if __name__ == "__main__":
 	register()
