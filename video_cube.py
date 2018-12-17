@@ -44,14 +44,19 @@ for i in range(1, 421):
     diff = nodes.new("ShaderNodeBsdfDiffuse")
     texture = nodes.new("ShaderNodeTexImage")
     coord = nodes.new("ShaderNodeTexCoord")
+    trans = nodes.new("ShaderNodeBsdfTransparent")
+    mix = nodes.new("ShaderNodeMixShader")
     
 	# Set source image for texture
     texture.image = bpy.data.images[str(i).zfill(4) + ".jpg"]
+    mix.inputs[0].default_value = 0
     
 	# Create links between material nodes
     mat.node_tree.links.new(texture.inputs["Vector"], coord.outputs["Generated"])
     mat.node_tree.links.new(diff.inputs["Color"], texture.outputs["Color"])
-    mat.node_tree.links.new(output.inputs["Surface"], diff.outputs["BSDF"])
+    mat.node_tree.links.new(mix.inputs[1], diff.outputs["BSDF"])
+    mat.node_tree.links.new(mix.inputs[2], trans.outputs["BSDF"])
+    mat.node_tree.links.new(output.inputs["Surface"], mix.outputs["Shader"])
 
     # Assign material to object
     if ob.data.materials:
