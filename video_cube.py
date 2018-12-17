@@ -42,6 +42,14 @@ class VideoCubeSettings(PropertyGroup):
         min = 0.1,
         max = 10
         )
+        
+    slice_size = FloatProperty(
+        name = "Slice Size",
+        description = "Relative size of each object representing a video frame",
+        default = 1,
+        min = 0.1,
+        max = 10
+        )
 
     default_path = bpy.path.abspath("//Frames\\")
     file_path = bpy.props.StringProperty \
@@ -84,7 +92,7 @@ class HelloWorldOperator(bpy.types.Operator):
         	# Add new cube to scene (one video frame)
         	bpy.ops.mesh.primitive_cube_add(location=(0, 0, i * (mytool.slice_thickness / 100 * 2)))
         	# Resize cube to be thinner
-        	bpy.ops.transform.resize(value=(size[0] / 1e3, size[1] / 1e3, mytool.slice_thickness / 100))
+        	bpy.ops.transform.resize(value=(size[0] / 1e3 * mytool.slice_size, size[1] / 1e3 * mytool.slice_size, mytool.slice_thickness / 100))
         	# Selected object
         	ob = bpy.context.active_object
         	# Rename slice
@@ -167,6 +175,7 @@ class OBJECT_PT_my_panel(Panel):
 
         layout.prop(mytool, "max_slices")
         layout.prop(mytool, "slice_thickness")
+        layout.prop(mytool, "slice_size")
         layout.prop(mytool, "file_path")
         layout.operator("wm.hello_world")
 
