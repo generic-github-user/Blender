@@ -3,8 +3,10 @@ import bpy
 # Set rendering engine to Cycles
 bpy.context.scene.render.engine = "CYCLES"
 
+# List of objects representing video frames
+layers = []
 # Import images into scene to use as object textures
-for i in range(1, 420):
+for i in range(1, 421):
 	# Name of image file
     name = str(i).zfill(4) + ".jpg"
 	# File path (relative to .blend file)
@@ -13,10 +15,7 @@ for i in range(1, 420):
     bpy.data.images.load(filepath, check_existing=True)
     #bpy.data.images[name].name = str(i)
 
-# List of objects representing video frames
-layers = []
-# Add objects and materials
-for i in range(1, 420):
+    # Add objects and materials
 	# Add new cube to scene (one video frame)
     bpy.ops.mesh.primitive_cube_add(location=(0, 0, i * 0.02))
 	# Resize cube to be thinner
