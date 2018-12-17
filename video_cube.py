@@ -203,7 +203,7 @@ class OBJECT_PT_my_panel(Panel):
 		layout.prop(settings, "slice_thickness")
 		layout.prop(settings, "slice_size")
 		layout.prop(settings, "file_path")
-		layout.operator("wm.hello_world")
+		layout.operator("wm.hello_world", icon="MOD_UVPROJECT")
 
 def register():
 	bpy.utils.register_module(__name__)
