@@ -72,6 +72,9 @@ class HelloWorldOperator(bpy.types.Operator):
 		scene = context.scene
 		settings = scene.video_cube
 
+		slice_thickness = settings.slice_thickness
+		slice_size = 1e3 * settings.slice_size
+
 		# Set rendering engine to Cycles
 		bpy.context.scene.render.engine = "CYCLES"
 
@@ -96,13 +99,13 @@ class HelloWorldOperator(bpy.types.Operator):
 			bpy.ops.mesh.primitive_cube_add(location=(
                 0,
                 0,
-                i * (settings.slice_thickness / 100 * 2)
+                i * (slice_thickness / 100 * 2)
             ))
 			# Resize cube to be thinner
 			bpy.ops.transform.resize(value=(
-                size[0] / 1e3 * settings.slice_size,
-                size[1] / 1e3 * settings.slice_size,
-                settings.slice_thickness / 100
+                size[0] / slice_size,
+                size[1] / slice_size,
+                slice_thickness / 100
             ))
 			# Selected object
 			ob = bpy.context.active_object
