@@ -22,13 +22,14 @@ for i in range(1, 420):
         mat = bpy.data.materials.new(name=str(i))
     
     mat.use_nodes = True;
-    for node in mat.node_tree.nodes:
-        mat.node_tree.nodes.remove(node)
+    nodes = mat.node_tree.nodes
+    for node in nodes:
+        nodes.remove(node)
         
-    output = mat.node_tree.nodes.new("ShaderNodeOutputMaterial")
-    diff = mat.node_tree.nodes.new("ShaderNodeBsdfDiffuse")
-    texture = mat.node_tree.nodes.new("ShaderNodeTexImage")
-    coord = mat.node_tree.nodes.new("ShaderNodeTexCoord")
+    output = nodes.new("ShaderNodeOutputMaterial")
+    diff = nodes.new("ShaderNodeBsdfDiffuse")
+    texture = nodes.new("ShaderNodeTexImage")
+    coord = nodes.new("ShaderNodeTexCoord")
     
     texture.image = bpy.data.images[str(i).zfill(4) + ".jpg"]
     
