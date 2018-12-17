@@ -22,13 +22,19 @@ for i in range(1, 420):
         mat = bpy.data.materials.new(name=str(i))
     
     mat.use_nodes = True;
+    for node in mat.node_tree.nodes:
+        mat.node_tree.nodes.remove(node)
+        
+    output = mat.node_tree.nodes.new("ShaderNodeOutputMaterial")
+    diff = mat.node_tree.nodes.new("ShaderNodeBsdfDiffuse")
     texture = mat.node_tree.nodes.new("ShaderNodeTexImage")
-    texture.image = bpy.data.images[str(i).zfill(4) + ".jpg"]
-    diff = mat.node_tree.nodes['Diffuse BSDF'].inputs["Color"]
-    mat.node_tree.links.new(diff, texture.outputs['Color'])
     coord = mat.node_tree.nodes.new("ShaderNodeTexCoord")
-    vector = texture.inputs["Vector"]
-    mat.node_tree.links.new(vector, coord.outputs['Generated'])
+    
+    texture.image = bpy.data.images[str(i).zfill(4) + ".jpg"]
+    
+    mat.node_tree.links.new(texture.inputs["Vector"], coord.outputs["Generated"])
+    mat.node_tree.links.new(diff.inputs["Color"], texture.outputs["Color"])
+    mat.node_tree.links.new(output.inputs["Surface"], diff.outputs["BSDF"])
 
     # Assign it to object
     if ob.data.materials:
