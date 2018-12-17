@@ -64,8 +64,8 @@ class VideoCubeSettings(PropertyGroup):
 #	operators
 # ------------------------------------------------------------------------
 
-class HelloWorldOperator(bpy.types.Operator):
-	bl_idname = "wm.hello_world"
+class Generate(bpy.types.Operator):
+	bl_idname = "wm.video_cube_generate"
 	bl_label = "Generate"
 
 	def execute(self, context):
@@ -206,7 +206,7 @@ class OBJECT_PT_my_panel(Panel):
 		layout.prop(settings, "slice_thickness")
 		layout.prop(settings, "slice_size")
 		layout.prop(settings, "file_path")
-		layout.operator("wm.hello_world", icon="MOD_UVPROJECT")
+		layout.operator("wm.video_cube_generate", icon="MOD_UVPROJECT")
 
 def register():
 	bpy.utils.register_module(__name__)
