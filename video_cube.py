@@ -12,14 +12,15 @@ for i in range(1, 421):
 	# File path (relative to .blend file)
     filepath = bpy.path.abspath("//Frames\\") + name
 	# Load image into scene
-    bpy.data.images.load(filepath, check_existing=True)
+    image = bpy.data.images.load(filepath, check_existing=True)
     #bpy.data.images[name].name = str(i)
 
     # Add objects and materials
+    size = image.size
 	# Add new cube to scene (one video frame)
     bpy.ops.mesh.primitive_cube_add(location=(0, 0, i * 0.02))
 	# Resize cube to be thinner
-    bpy.ops.transform.resize(value=(1, 1, 0.01))
+    bpy.ops.transform.resize(value=(size[0] / 1e3, size[1] / 1e3, 0.01))
 	# Selected object
     ob = bpy.context.active_object
 	# Add slice to list of layers
