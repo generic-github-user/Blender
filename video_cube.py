@@ -135,11 +135,17 @@ class Generate(bpy.types.Operator):
 					
 				# Add nodes
 				output = nodes.new("ShaderNodeOutputMaterial")
+				output.location = 500, 0
 				diff = nodes.new("ShaderNodeBsdfDiffuse")
+				diff.location = 0, 0
 				texture = nodes.new("ShaderNodeTexImage")
+				texture.location = -250, 0
 				coord = nodes.new("ShaderNodeTexCoord")
+				coord.location = -500, 0
 				trans = nodes.new("ShaderNodeBsdfTransparent")
+				trans.location = 0, -250
 				mix = nodes.new("ShaderNodeMixShader")
+				mix.location = 250, 0
 				
 				# Set source image for texture
 				texture.image = bpy.data.images[str(i).zfill(4) + ".jpg"]
