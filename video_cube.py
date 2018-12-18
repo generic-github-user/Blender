@@ -12,6 +12,7 @@ bl_info = {
 }
 
 import bpy
+import os
 
 from bpy.props import (StringProperty,
 					   BoolProperty,
@@ -30,7 +31,7 @@ class VideoCubeSettings(PropertyGroup):
 	max_slices = IntProperty(
 		name = "Limit Slices",
 		description="Maximum number of slices to generate",
-		default = 400,
+		default = 500,
 		min = 1,
 		max = 100000
 	)
@@ -81,92 +82,96 @@ class Generate(bpy.types.Operator):
 		# List of objects representing video frames
 		layers = []
 		# Import images into scene to use as object textures
-		for i in range(1, 421):
+		for i in range(1, settings.max_slices):
+			
 			# Name of image file
 			name = str(i).zfill(4) + ".jpg"
 			# File path (relative to .blend file)
 			filepath = settings.file_path + name
-			# Load image into scene
-			image = bpy.data.images.load(
-                filepath,
-                check_existing=True
-            )
-			#bpy.data.images[name].name = str(i)
-
-			# Add objects and materials
-			size = image.size
-			# Add new cube to scene (one video frame)
-			bpy.ops.mesh.primitive_cube_add(location=(
-                0,
-                0,
-                i * (slice_thickness / 100 * 2)
-            ))
-			# Resize cube to be thinner
-			bpy.ops.transform.resize(value=(
-                size[0] / slice_size,
-                size[1] / slice_size,
-                slice_thickness / 100
-            ))
-			# Selected object
-			ob = bpy.context.active_object
-			# Rename slice
-			ob.name = "Video Slice " + str(i)
-			# Add slice to list of layers
-			layers.append(ob)
-
-			# Check if material exists
-			mat = bpy.data.materials.get(str(i))
-			if mat is None:
-				# Create new material if none exists
-				mat = bpy.data.materials.new(name=str(i))
 			
-			# Set material to use node editor
-			mat.use_nodes = True;
-			# List of nodes in material node tree
-			nodes = mat.node_tree.nodes
-			# Remove all nodes from material
-			for node in nodes:
-				nodes.remove(node)
+			if (os.path.isfile(filepath)):
+			
+				# Load image into scene
+				image = bpy.data.images.load(
+	                filepath,
+	                check_existing=True
+	            )
+				#bpy.data.images[name].name = str(i)
+
+				# Add objects and materials
+				size = image.size
+				# Add new cube to scene (one video frame)
+				bpy.ops.mesh.primitive_cube_add(location=(
+	                0,
+	                0,
+	                i * (slice_thickness / 100 * 2)
+	            ))
+				# Resize cube to be thinner
+				bpy.ops.transform.resize(value=(
+	                size[0] / slice_size,
+	                size[1] / slice_size,
+	                slice_thickness / 100
+	            ))
+				# Selected object
+				ob = bpy.context.active_object
+				# Rename slice
+				ob.name = "Video Slice " + str(i)
+				# Add slice to list of layers
+				layers.append(ob)
+
+				# Check if material exists
+				mat = bpy.data.materials.get(str(i))
+				if mat is None:
+					# Create new material if none exists
+					mat = bpy.data.materials.new(name=str(i))
 				
-			# Add nodes
-			output = nodes.new("ShaderNodeOutputMaterial")
-			diff = nodes.new("ShaderNodeBsdfDiffuse")
-			texture = nodes.new("ShaderNodeTexImage")
-			coord = nodes.new("ShaderNodeTexCoord")
-			trans = nodes.new("ShaderNodeBsdfTransparent")
-			mix = nodes.new("ShaderNodeMixShader")
-			
-			# Set source image for texture
-			texture.image = bpy.data.images[str(i).zfill(4) + ".jpg"]
-			mix.inputs[0].default_value = 0
-			
-			# Create links between material nodes
-			mat.node_tree.links.new(
-                texture.inputs["Vector"],
-                coord.outputs["Generated"]
-            )
-			mat.node_tree.links.new(
-                diff.inputs["Color"],
-                texture.outputs["Color"]
-            )
-			mat.node_tree.links.new(
-                mix.inputs[1],
-                diff.outputs["BSDF"]
-            )
-			mat.node_tree.links.new(
-                mix.inputs[2],
-                trans.outputs["BSDF"]
-            )
-			mat.node_tree.links.new(
-                output.inputs["Surface"],
-                mix.outputs["Shader"]
-            )
+				# Set material to use node editor
+				mat.use_nodes = True;
+				# List of nodes in material node tree
+				nodes = mat.node_tree.nodes
+				# Remove all nodes from material
+				for node in nodes:
+					nodes.remove(node)
+					
+				# Add nodes
+				output = nodes.new("ShaderNodeOutputMaterial")
+				diff = nodes.new("ShaderNodeBsdfDiffuse")
+				texture = nodes.new("ShaderNodeTexImage")
+				coord = nodes.new("ShaderNodeTexCoord")
+				trans = nodes.new("ShaderNodeBsdfTransparent")
+				mix = nodes.new("ShaderNodeMixShader")
+				
+				# Set source image for texture
+				texture.image = bpy.data.images[str(i).zfill(4) + ".jpg"]
+				mix.inputs[0].default_value = 0
+				
+				# Create links between material nodes
+				mat.node_tree.links.new(
+	                texture.inputs["Vector"],
+	                coord.outputs["Generated"]
+	            )
+				mat.node_tree.links.new(
+	                diff.inputs["Color"],
+	                texture.outputs["Color"]
+	            )
+				mat.node_tree.links.new(
+	                mix.inputs[1],
+	                diff.outputs["BSDF"]
+	            )
+				mat.node_tree.links.new(
+	                mix.inputs[2],
+	                trans.outputs["BSDF"]
+	            )
+				mat.node_tree.links.new(
+	                output.inputs["Surface"],
+	                mix.outputs["Shader"]
+	            )
 
-			# Assign material to object
-			if ob.data.materials:
-				ob.data.materials[0] = mat
-			else:
-				ob.data.materials.append(mat)
+				# Assign material to object
+				if ob.data.materials:
+					ob.data.materials[0] = mat
+				else:
+					ob.data.materials.append(mat)
 
 		# Select all slices
 		for layer in layers:
