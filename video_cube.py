@@ -5,7 +5,7 @@ bl_info = {
 	"version": (0, 0, 1),
 	"blender": (2, 70, 0),
 	"location": "3D View > Create",
-	"warning": "", # used for warning icon and text in addons panel
+	"warning": "",
 	"wiki_url": "",
 	"tracker_url": "",
 	"category": "Development"
@@ -52,11 +52,10 @@ class VideoCubeSettings(PropertyGroup):
 		max = 10
 	)
 
-	default_path = bpy.path.abspath("//Frames\\")
 	file_path = bpy.props.StringProperty \
     (
     	name = "File Path",
-    	default = default_path,
+    	default = "",
     	description = "Define a directory to pull video frames from",
     	subtype = 'DIR_PATH'
     )
