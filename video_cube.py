@@ -53,12 +53,12 @@ class VideoCubeSettings(PropertyGroup):
 	)
 
 	file_path = bpy.props.StringProperty \
-    (
-    	name = "File Path",
-    	default = "",
-    	description = "Define a directory to pull video frames from",
-    	subtype = 'DIR_PATH'
-    )
+	(
+		name = "File Path",
+		default = "",
+		description = "Define a directory to pull video frames from",
+		subtype = 'DIR_PATH'
+	)
 
 # ------------------------------------------------------------------------
 #	operators
@@ -92,25 +92,25 @@ class Generate(bpy.types.Operator):
 			
 				# Load image into scene
 				image = bpy.data.images.load(
-	                filepath,
-	                check_existing=True
-	            )
+					filepath,
+					check_existing=True
+				)
 				#bpy.data.images[name].name = str(i)
 
 				# Add objects and materials
 				size = image.size
 				# Add new cube to scene (one video frame)
 				bpy.ops.mesh.primitive_cube_add(location=(
-	                0,
-	                0,
-	                i * (slice_thickness / 100 * 2)
-	            ))
+					0,
+					0,
+					i * (slice_thickness / 100 * 2)
+				))
 				# Resize cube to be thinner
 				bpy.ops.transform.resize(value=(
-	                size[0] / slice_size,
-	                size[1] / slice_size,
-	                slice_thickness / 100
-	            ))
+					size[0] / slice_size,
+					size[1] / slice_size,
+					slice_thickness / 100
+				))
 				# Selected object
 				ob = bpy.context.active_object
 				# Rename slice
@@ -152,25 +152,25 @@ class Generate(bpy.types.Operator):
 				
 				# Create links between material nodes
 				mat.node_tree.links.new(
-	                texture.inputs["Vector"],
-	                coord.outputs["Generated"]
-	            )
+					texture.inputs["Vector"],
+					coord.outputs["Generated"]
+				)
 				mat.node_tree.links.new(
-	                diff.inputs["Color"],
-	                texture.outputs["Color"]
-	            )
+					diff.inputs["Color"],
+					texture.outputs["Color"]
+				)
 				mat.node_tree.links.new(
-	                mix.inputs[1],
-	                diff.outputs["BSDF"]
-	            )
+					mix.inputs[1],
+					diff.outputs["BSDF"]
+				)
 				mat.node_tree.links.new(
-	                mix.inputs[2],
-	                trans.outputs["BSDF"]
-	            )
+					mix.inputs[2],
+					trans.outputs["BSDF"]
+				)
 				mat.node_tree.links.new(
-	                output.inputs["Surface"],
-	                mix.outputs["Shader"]
-	            )
+					output.inputs["Surface"],
+					mix.outputs["Shader"]
+				)
 
 				# Assign material to object
 				if ob.data.materials:
