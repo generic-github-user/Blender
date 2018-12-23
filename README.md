@@ -1,6 +1,10 @@
 # Blender
 
+An assortment of Python scripts and add-ons for [Blender](https://www.blender.org/).
+
 # Scripts
+
+A list of scripts with links to the code and a relevant blog post (if one exists) for each one.
 
 ## Video Cube
 
